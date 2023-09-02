@@ -3,6 +3,7 @@ import numpy as np
 import torch
 from typing import Dict, List
 
+
 def plot_samples(samples, targets, feature, figsize=(12, 12)):
     assert feature < samples.shape[-1]
 
@@ -19,29 +20,28 @@ def plot_samples(samples, targets, feature, figsize=(12, 12)):
 
     plt.plot(sample_x, chosen_sample, color="red")
     plt.plot(target_x, chosen_target, color="black")
-
     plt.show()
 
 
 # model plot
 
 
-
 def plot_history(history: Dict[str, Dict[str, List]]):
     val_data = history["val"]
     train_data = history["train"]
     nr_metrics = len(train_data.keys())
-    fig = plt.figure(figsize=(8, 4 * nr_metrics))
-
+    fig, axs = plt.subplots(nr_metrics, 1, figsize=(8, 4 * nr_metrics), squeeze=False)
+    print("History:")
     for i, name in enumerate(train_data.keys()):
-        ax = fig.add_subplot(nr_metrics, 1, i + 1)
-        plt.plot(train_data[name], label="train " + name, color="b")
-        plt.plot(val_data[name], label="val " + name, color="r")
-        plt.title(name)
-        plt.xlabel("Epoch")
-        plt.ylabel(name)
-        plt.legend()
 
+        axs[i].set_ylim(-10, 10)
+        axs[i].plot(train_data[name], label="train " + name, color="b")
+        axs[i].plot(val_data[name], label="val " + name, color="r")
+        axs[i].title(name)
+        axs[i].xlabel("Epoch")
+        axs[i].ylabel(name)
+        
+        axs[i].legend()
     plt.show()
 
 
@@ -60,6 +60,7 @@ def plot_predictions(header, samples, targets, output, mean, std):
         temp_target = targets[0, :, feature]
         temp_output = output[0, :, feature]
         plt.figure(figsize=(20, 4))
+
         plt.plot(
             torch.cat((temp_sample, temp_target), dim=0),
             color="black",
