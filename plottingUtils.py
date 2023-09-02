@@ -7,8 +7,8 @@ from typing import Dict, List
 def plot_samples(samples, targets, feature, figsize=(12, 12)):
     assert feature < samples.shape[-1]
 
-    chosen_sample = samples[0, :, feature]
-    chosen_target = targets[0, :, feature]
+    chosen_sample = samples[0, :, feature].cpu().detach().numpy()
+    chosen_target = targets[0, :, feature].cpu().detach().numpy()
 
     plt.figure(figsize=figsize)
     sample_x = np.linspace(0, len(chosen_sample), len(chosen_sample))
@@ -33,15 +33,15 @@ def plot_history(history: Dict[str, Dict[str, List]]):
     fig, axs = plt.subplots(nr_metrics, 1, figsize=(8, 4 * nr_metrics), squeeze=False)
     print("History:")
     for i, name in enumerate(train_data.keys()):
-
-        axs[i].set_ylim(-10, 10)
-        axs[i].plot(train_data[name], label="train " + name, color="b")
-        axs[i].plot(val_data[name], label="val " + name, color="r")
-        axs[i].title(name)
-        axs[i].xlabel("Epoch")
-        axs[i].ylabel(name)
+        ax = axs[i,0]
+        ax.set_ylim(0, 1)
+        ax.plot(train_data[name], label="train " + name, color="b")
+        ax.plot(val_data[name], label="val " + name, color="r")
+        ax.set_title(name)
+        ax.set_xlabel("Epoch")
+        ax.set_ylabel(name)
         
-        axs[i].legend()
+        ax.legend()
     plt.show()
 
 

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-
+import sys
 
 def add_features(dataframe, steps_in_day=24):
 
@@ -46,6 +46,12 @@ def normalize_data(data):
     mean = data.mean(axis=0)
     std = data.std(axis=0)
     return (data - mean) / std, mean, std
+
+def write_last_line(string):
+    sys.stdout.write("\r")
+    sys.stdout.flush()
+    print(string, end="")
+
 
 def print_duration(duration):
     """
