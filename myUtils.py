@@ -41,7 +41,7 @@ def extract_data(dataframe):
         Tuple[pandas.Index, torch.Tensor]: A tuple containing the columns of the dataframe
         and a tensor of the dataframe values.
     """
-    return dataframe.columns, torch.tensor(dataframe.values)
+    return dataframe.columns, torch.tensor(dataframe.values).float()
 def normalize_data(data):
     mean = data.mean(axis=0)
     std = data.std(axis=0)
@@ -79,19 +79,6 @@ def floating_window_batch_generator(
     batch_size=128,
     step=6,
 ):
-    """
-    Generate a batch of subsequences of data.
-
-    Args:
-        data: (samples, features)
-        sample_len: number of samples in the past.
-        target_len: number of samples to predict
-        min_index: index of first sample
-        max_index: index after the last sample
-        shuffle: (boolean) if False, return batches in chronological order.
-        batch_size: (int)
-        step: (int) number of timesteps between samples
-    """
     n_features = data.shape[-1]
     if max_index is None:
         max_index = len(data) - target_len - 1
@@ -99,22 +86,19 @@ def floating_window_batch_generator(
 
     window_size = (sample_len + target_len) * step
 
-    while 1:
+    while True:
         if shuffle:
-            rows = np.random.randint(
-                min_index, max_index - (sample_len + target_len) * step, size=batch_size
+            rows = torch.randint(
+                min_index, max_index - window_size, size=(batch_size,)
             )
         else:
-            if i + batch_size >= max_index - (sample_len + target_len) * step:
-                i = min_index  # reset to beggining
-            rows = np.arange(i, min(i + batch_size, max_index))
-            i += len(rows)
+            if i + batch_size >= max_index - window_size:
+                i = min_index
+            rows = torch.arange(i, i + batch_size)
+            i += batch_size
 
-        samples = torch.zeros((len(rows), sample_len, n_features))
-        targets = torch.zeros((len(rows), target_len, n_features))
-        for j, row in enumerate(rows):
-            indices = range(row, row + window_size, step)
-            samples[j] = data[indices[:sample_len]]
-            targets[j] = data[indices[sample_len:]]
+        indices = torch.arange(sample_len + target_len)[None,:]* step + rows[:,None] 
+        samples = torch.stack([data[indices[i, :sample_len]] for i in range(batch_size)])
+        targets = torch.stack([data[indices[i, sample_len:]] for i in range(batch_size)])
 
         yield samples, targets
