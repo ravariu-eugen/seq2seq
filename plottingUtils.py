@@ -26,7 +26,7 @@ def plot_samples(samples, targets, feature, figsize=(12, 12)):
 # model plot
 
 
-def plot_history(history: Dict[str, Dict[str, List]]):
+def plot_history(history: Dict[str, Dict[str, List]], ylim=(0, 1)):
     val_data = history["val"]
     train_data = history["train"]
     nr_metrics = len(train_data.keys())
@@ -34,7 +34,8 @@ def plot_history(history: Dict[str, Dict[str, List]]):
     print("History:")
     for i, name in enumerate(train_data.keys()):
         ax = axs[i,0]
-        ax.set_ylim(0, 1)
+        if(ylim is not None):
+            ax.set_ylim(*ylim)
         ax.plot(train_data[name], label="train " + name, color="b")
         ax.plot(val_data[name], label="val " + name, color="r")
         ax.set_title(name)
