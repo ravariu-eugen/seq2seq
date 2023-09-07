@@ -33,15 +33,15 @@ def plot_history(history: Dict[str, Dict[str, List]], ylim=(0, 1)):
     fig, axs = plt.subplots(nr_metrics, 1, figsize=(8, 4 * nr_metrics), squeeze=False)
     print("History:")
     for i, name in enumerate(train_data.keys()):
-        ax = axs[i,0]
-        if(ylim is not None):
+        ax = axs[i, 0]
+        if ylim is not None:
             ax.set_ylim(*ylim)
         ax.plot(train_data[name], label="train " + name, color="b")
         ax.plot(val_data[name], label="val " + name, color="r")
         ax.set_title(name)
         ax.set_xlabel("Epoch")
         ax.set_ylabel(name)
-        
+
         ax.legend()
     plt.show()
 
