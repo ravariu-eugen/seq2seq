@@ -120,12 +120,6 @@ Intrucat modelul Iterative are un timp de antrenare foarte mare si cea mai mare 
 
 Modelul Encoder are un timp de antrenare preportional cu dimensiunea secventei prezise, intrucat necesita aplicarea modulului FC pentru fiecare element din secventa, in timp ce modelul Fourier nu are nevoie de acest lucru. Totusi, se observa ca modelul Fourier are o eroare mai mare.
 
-In urmatoarele teste, vom testa doar modelul Fourier.
-
-### Test 3
-
-In acest test, urmarim cum influenteaza hyperparametrii rezultatele modelului.
-
 ## Detalii de implementare
 
 1. Citirea datelor
